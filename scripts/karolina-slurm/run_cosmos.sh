@@ -22,8 +22,7 @@ PYTHONPATH=$(pwd) torchrun \
     cosmos_transfer1/diffusion/inference/transfer.py \
     --checkpoint_dir $CHECKPOINT_DIR \
     --video_save_folder ${OUT_DIR} \
-    #--video_save_folder outputs/car_anim_fix1_rgb_short_edge_5 \
-    --controlnet_specs assets/inference_cosmos_transfer1_car_anim_fix1_rgb_short_edge_2.json \
+    --controlnet_specs ${ROOT_DIR}/in/config.json \
     --offload_diffusion_transformer \
     --offload_text_encoder_model \
     --offload_guardrail_models \

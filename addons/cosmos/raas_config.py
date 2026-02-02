@@ -397,7 +397,7 @@ def GetDAServer(context):
 def GetDAClusterPath(context, project_dir, pid):
     #blender_job_info_new = context.scene.raas_blender_job_info_new
     #if blender_job_info_new.cluster_type == 'BARBORA' or blender_job_info_new.cluster_type == 'KAROLINA':    
-    return project_dir + '/braas-hpc/direct'
+    return project_dir + '/blender_addon_test/direct'
 
 
 def GetDAOpenCallProject(pid):
@@ -446,231 +446,231 @@ def GetDAQueueScript(ClusterId, CommandTemplateId):
     # BARBORA
     if ClusterId == 1:
         if CommandTemplateId == 10 * ClusterId:
-            return 36,'~/braas-hpc/scripts/barbora-slurm/job_init.sh'
+            return 36,'~/blender_addon_test/scripts/barbora-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 36,'~/braas-hpc/scripts/barbora-slurm/run_blender_cpu.sh'
+            return 36,'~/blender_addon_test/scripts/barbora-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 36,'~/braas-hpc/scripts/barbora-slurm/job_finish.sh'
+            return 36,'~/blender_addon_test/scripts/barbora-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 24,'~/braas-hpc/scripts/barbora-slurm/job_init.sh'
+            return 24,'~/blender_addon_test/scripts/barbora-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 24,'~/braas-hpc/scripts/barbora-slurm/run_blender_gpu.sh'
+            return 24,'~/blender_addon_test/scripts/barbora-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 24,'~/braas-hpc/scripts/barbora-slurm/job_finish.sh'
+            return 24,'~/blender_addon_test/scripts/barbora-slurm/job_finish.sh'
         
 
     # KAROLINA
     elif ClusterId == 2:     
         if CommandTemplateId == 10 * ClusterId:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/job_init.sh'
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/job_init.sh'
         
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/run_blender_cpu.sh'
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/run_blender_cpu.sh'
 
         # elif CommandTemplateId == 10 * ClusterId + 2:
         #     return 128,'~/start_cosmos_script.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/job_finish.sh'
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/job_init.sh'
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/run_blender_gpu.sh'
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/run_blender_gpu.sh'
         
         elif CommandTemplateId == 10 * ClusterId + 5:
             return 128,'~/brass-hpc/scripts/start_cosmos_script.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 6:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/job_finish.sh'
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/job_finish.sh'
 
                                
     # LUMI
     elif ClusterId == 3:     
         if CommandTemplateId == 10 * ClusterId:
-            return 128,'~/braas-hpc/scripts/lumi-slurm/job_init.sh'
+            return 128,'~/blender_addon_test/scripts/lumi-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 128,'~/braas-hpc/scripts/lumi-slurm/run_blender_cpu.sh'
+            return 128,'~/blender_addon_test/scripts/lumi-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 128,'~/braas-hpc/scripts/lumi-slurm/job_finish.sh'
+            return 128,'~/blender_addon_test/scripts/lumi-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 128,'~/braas-hpc/scripts/lumi-slurm/job_init.sh'
+            return 128,'~/blender_addon_test/scripts/lumi-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 128,'~/braas-hpc/scripts/lumi-slurm/run_blender_gpu.sh'
+            return 128,'~/blender_addon_test/scripts/lumi-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 128,'~/braas-hpc/scripts/lumi-slurm/job_finish.sh'
+            return 128,'~/blender_addon_test/scripts/lumi-slurm/job_finish.sh'
 
 
     # LEONARDO
     elif ClusterId == 4:
         if CommandTemplateId == 10 * ClusterId:
-            return 32,'~/braas-hpc/scripts/leonardo-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/leonardo-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 32,'~/braas-hpc/scripts/leonardo-slurm/run_blender_cpu.sh'
+            return 32,'~/blender_addon_test/scripts/leonardo-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 32,'~/braas-hpc/scripts/leonardo-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/leonardo-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 32,'~/braas-hpc/scripts/leonardo-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/leonardo-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 32,'~/braas-hpc/scripts/leonardo-slurm/run_blender_gpu.sh'
+            return 32,'~/blender_addon_test/scripts/leonardo-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 32,'~/braas-hpc/scripts/leonardo-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/leonardo-slurm/job_finish.sh'
         
     # "MARENOSTRUM5GPP": "MareNostrum 5 GPP",
     elif ClusterId == 5:
         if CommandTemplateId == 10 * ClusterId:
-            return 32,'~/braas-hpc/scripts/marenostrum5gpp-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5gpp-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 32,'~/braas-hpc/scripts/marenostrum5gpp-slurm/run_blender_cpu.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5gpp-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 32,'~/braas-hpc/scripts/marenostrum5gpp-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5gpp-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 32,'~/braas-hpc/scripts/marenostrum5gpp-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5gpp-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 32,'~/braas-hpc/scripts/marenostrum5gpp-slurm/run_blender_gpu.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5gpp-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 32,'~/braas-hpc/scripts/marenostrum5gpp-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5gpp-slurm/job_finish.sh'
 
     # "MARENOSTRUM5ACC": "MareNostrum 5 ACC",
     elif ClusterId == 6:
         if CommandTemplateId == 10 * ClusterId:
-            return 32,'~/braas-hpc/scripts/marenostrum5acc-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5acc-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 32,'~/braas-hpc/scripts/marenostrum5acc-slurm/run_blender_cpu.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5acc-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 32,'~/braas-hpc/scripts/marenostrum5acc-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5acc-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 32,'~/braas-hpc/scripts/marenostrum5acc-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5acc-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 32,'~/braas-hpc/scripts/marenostrum5acc-slurm/run_blender_gpu.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5acc-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 32,'~/braas-hpc/scripts/marenostrum5acc-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/marenostrum5acc-slurm/job_finish.sh'
 
     # "POLARIS": "Polaris",
     elif ClusterId == 7:
         if CommandTemplateId == 10 * ClusterId:
-            return 64,'~/braas-hpc/scripts/polaris-pbs/job_init.sh'
+            return 64,'~/blender_addon_test/scripts/polaris-pbs/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 64,'~/braas-hpc/scripts/polaris-pbs/run_blender_cpu.sh'
+            return 64,'~/blender_addon_test/scripts/polaris-pbs/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 64,'~/braas-hpc/scripts/polaris-pbs/job_finish.sh'
+            return 64,'~/blender_addon_test/scripts/polaris-pbs/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 64,'~/braas-hpc/scripts/polaris-pbs/job_init.sh'
+            return 64,'~/blender_addon_test/scripts/polaris-pbs/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 64,'~/braas-hpc/scripts/polaris-pbs/run_blender_gpu.sh'
+            return 64,'~/blender_addon_test/scripts/polaris-pbs/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 64,'~/braas-hpc/scripts/polaris-pbs/job_finish.sh'
+            return 64,'~/blender_addon_test/scripts/polaris-pbs/job_finish.sh'
 
     # "AURORA": "Aurora",
     elif ClusterId == 8:
         if CommandTemplateId == 10 * ClusterId:
-            return 32,'~/braas-hpc/scripts/aurora-pbs/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/aurora-pbs/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 32,'~/braas-hpc/scripts/aurora-pbs/run_blender_cpu.sh'
+            return 32,'~/blender_addon_test/scripts/aurora-pbs/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 32,'~/braas-hpc/scripts/aurora-pbs/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/aurora-pbs/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 32,'~/braas-hpc/scripts/aurora-pbs/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/aurora-pbs/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 32,'~/braas-hpc/scripts/aurora-pbs/run_blender_gpu.sh'
+            return 32,'~/blender_addon_test/scripts/aurora-pbs/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 32,'~/braas-hpc/scripts/aurora-pbs/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/aurora-pbs/job_finish.sh'
 
     # "VISTA": "Vista",
     elif ClusterId == 9:
         if CommandTemplateId == 10 * ClusterId:
-            return 72,'~/braas-hpc/scripts/vista-slurm/job_init.sh'
+            return 72,'~/blender_addon_test/scripts/vista-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 72,'~/braas-hpc/scripts/vista-slurm/run_blender_cpu.sh'
+            return 72,'~/blender_addon_test/scripts/vista-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 72,'~/braas-hpc/scripts/vista-slurm/job_finish.sh'
+            return 72,'~/blender_addon_test/scripts/vista-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 72,'~/braas-hpc/scripts/vista-slurm/job_init.sh'
+            return 72,'~/blender_addon_test/scripts/vista-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 72,'~/braas-hpc/scripts/vista-slurm/run_blender_gpu.sh'
+            return 72,'~/blender_addon_test/scripts/vista-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 72,'~/braas-hpc/scripts/vista-slurm/job_finish.sh'
+            return 72,'~/blender_addon_test/scripts/vista-slurm/job_finish.sh'
         
     # "FRONTERA": "Frontera",
     elif ClusterId == 10:
         if CommandTemplateId == 10 * ClusterId:
-            return 32,'~/braas-hpc/scripts/frontera-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/frontera-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 32,'~/braas-hpc/scripts/frontera-slurm/run_blender_cpu.sh'
+            return 32,'~/blender_addon_test/scripts/frontera-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 32,'~/braas-hpc/scripts/frontera-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/frontera-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 32,'~/braas-hpc/scripts/frontera-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/frontera-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 32,'~/braas-hpc/scripts/frontera-slurm/run_blender_gpu.sh'
+            return 32,'~/blender_addon_test/scripts/frontera-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 32,'~/braas-hpc/scripts/frontera-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/frontera-slurm/job_finish.sh'
         
     # "CS": "CS",
     elif ClusterId == 11:
         if CommandTemplateId == 10 * ClusterId:
-            return 32,'~/braas-hpc/scripts/cs-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/cs-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 1:
-            return 32,'~/braas-hpc/scripts/cs-slurm/run_blender_cpu.sh'
+            return 32,'~/blender_addon_test/scripts/cs-slurm/run_blender_cpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 2:
-            return 32,'~/braas-hpc/scripts/cs-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/cs-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 32,'~/braas-hpc/scripts/cs-slurm/job_init.sh'
+            return 32,'~/blender_addon_test/scripts/cs-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 32,'~/braas-hpc/scripts/cs-slurm/run_blender_gpu.sh'
+            return 32,'~/blender_addon_test/scripts/cs-slurm/run_blender_gpu.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
-            return 32,'~/braas-hpc/scripts/cs-slurm/job_finish.sh'
+            return 32,'~/blender_addon_test/scripts/cs-slurm/job_finish.sh'
                 
     else:
         return None, None
@@ -701,7 +701,7 @@ def GetDAJobSpecialFlags(context, ClusterId, CommandTemplateId, pid_queue):
 
 
 def GetGitAddonCommand(repository, branch):    
-    return 'if [ -d ~/braas-hpc ] ; then rm -rf ~/braas-hpc ; fi ; git clone -q -b ' + branch + ' ' + repository
+    return 'if [ -d ~/blender_addon_test ] ; then rm -rf ~/blender_addon_test ; fi ; git clone -q -b ' + branch + ' ' + repository
 
 def GetBlenderInstallCommand(preset, url_link):
     # Split the URL by '/' and get the last part
@@ -739,7 +739,7 @@ def GetBlenderPatchCommand(preset, url_link):
 #     return 'if [ -d ~/blender ] ; then rm -rf ~/blender ; fi ; \
 #         wget -nv https://ftp.nluug.nl/pub/graphics/blender/release/Blender4.0/%s.tar.xz ; \
 #         tar -xf %s.tar.xz ; mv %s ~/blender ; rm %s.tar.xz ; \
-#             patch ~/blender/4.0/scripts/addons/cycles/source/kernel/types.h < ~/braas-hpc/scripts/lumi-slurm/patch/types.patch \
+#             patch ~/blender/4.0/scripts/addons/cycles/source/kernel/types.h < ~/blender_addon_test/scripts/lumi-slurm/patch/types.patch \
 #             ' % (blender_file, blender_file, blender_file, blender_file)
 
 def GetCurrentPidInfo(context, preferences):
