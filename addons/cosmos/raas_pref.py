@@ -37,10 +37,12 @@ import rna_prop_ui
 
 from . import async_loop
 from . import raas_server
+from . import raas_jobs
 from . import raas_config
+from . import raas_render
 from . import raas_connection
 
-ADDON_NAME = 'braas_hpc'
+ADDON_NAME = 'cosmos'
 
 log = logging.getLogger(__name__)
 
@@ -59,7 +61,7 @@ def factor(factor: float) -> dict:
 ##################################################
 
 
-def show_message_box(message="", title="BRaaS-HPC", icon='INFO'):
+def show_message_box(message="", title="cosmos-HPC", icon='INFO'):
 
     def draw(self, context):
         self.layout.label(text=message)
@@ -220,82 +222,6 @@ class RAAS_OT_upload_sshkey(Operator):
         self.report({'INFO'}, "'%s' finished" % (self.bl_label))
         return {"FINISHED"}
 
-
-# class RAAS_OT_setup_sshkey(Operator):
-#     bl_idname = 'raas.setup_sshkey'
-#     bl_label = 'Setup'
-#     bl_description = ("Setup")
-
-#     def execute(self, context):
-#         try:
-#             pref = preferences()
-
-#             if not pref.check_valid_settings_gen():
-#                 return {"CANCELLED"}
-
-#             pref.raas_da_username = pref.raas_gen_username
-#             pref.raas_private_key_path = pref.raas_gen_private_key_path
-#             pref.raas_private_key_password = pref.raas_gen_password
-#             pref.raas_pid = pref.raas_gen_pid
-#             pref.raas_project_group = pref.raas_da_username
-
-#             # TODO
-#             if not pref.check_valid_settings(type='PROJECT_DIR'):
-#                 return {"CANCELLED"}
-
-#             cmd = raas_jobs.CmdGetPidDir(pref.raas_pid.upper())
-#             if len(cmd) > 0:
-#                 server = raas_config.GetDAServer(context)
-#                 res = raas_connection.ssh_command_sync(server, cmd)
-#                 pref.raas_pid_dir = res.strip()
-
-#         except Exception as e:
-#             import traceback
-#             traceback.print_exc()
-
-#             self.report({'ERROR'}, "Problem with %s: %s: %s" %
-#                         (self.bl_label, e.__class__, e))
-#             return {"CANCELLED"}
-
-#         self.report({'INFO'}, "'%s' finished" % (self.bl_label))
-#         return {"FINISHED"}
-
-
-# class RAAS_OT_find_pid_dir(Operator):
-#     bl_idname = 'raas.find_pid_dir'
-#     bl_label = 'Find Project Dir'
-#     bl_description = ("Find Project Dir")
-
-#     def execute(self, context):
-#         # success = True
-
-#         for cl in raas_config.Cluster_items:
-#             try:
-#                 if not preferences().check_valid_settings(type='PROJECT_DIR'):
-#                     return {"CANCELLED"}
-
-#                 cmd = raas_jobs.CmdGetPidDir(preferences().raas_pid.upper())
-#                 if len(cmd) > 0:
-#                     # server = raas_config.GetDAServer(context)
-#                     server = raas_config.GetServerFromType(cl[0])
-#                     res = raas_connection.ssh_command_sync(server, cmd)
-#                     preferences().raas_pid_dir = res.strip()
-
-#                     break
-
-#             except Exception as e:
-#                 import traceback
-#                 traceback.print_exc()
-
-#                 self.report({'ERROR'}, "Problem with %s: %s: %s" %
-#                             (self.bl_label, e.__class__, e))
-#                 # return {"CANCELLED"}
-#                 # success = False
-
-#         self.report({'INFO'}, "'%s' finished" % (self.bl_label))
-#         return {"FINISHED"}
-
-
 class RAAS_OT_install_scripts(Operator):
     bl_idname = 'raas.install_scripts'
     bl_label = 'Install scripts on the cluster'
@@ -358,50 +284,8 @@ class RAAS_OT_install_scripts(Operator):
 
         self.report({'INFO'}, "'%s' finished" % (self.bl_label))
         return {"FINISHED"}
-    
-# class RAAS_OT_install_blender(Operator):
-#     bl_idname = 'raas.install_blender'
-#     bl_label = 'Install Blender on the cluster'
-#     bl_description = ("Install Blender")
-
-#     def execute(self, context):
-#         for cl in raas_config.Cluster_items:
-#             try:
-#                 # presets_tuples = [(p.cluster_name, p.is_enabled) for p in preferences().cluster_presets] 
-#                 # if not preferences().check_valid_settings(cl, type='INSTALL_BLENDER'):
-#                 #     return {"CANCELLED"}
-
-#                 for p in preferences().cluster_presets:
-#                     #if (cl[0], True) in presets_tuples:
-#                     if p.cluster_name == cl[0] and p.is_enabled:
-#                         # TODO: MJ
-#                         if not preferences().check_valid_settings(p, type='INSTALL_SCRIPTS'):
-#                             return {"CANCELLED"}
-                                                                 
-#                         self.report({'INFO'}, "Install Blender on '%s'" % (cl[0]))
-
-#                         cmd = raas_config.GetBlenderInstallCommand(preferences().raas_blender_link)
-#                         if len(cmd) > 0:
-#                             server = raas_config.GetServerFromType(cl[0])
-#                             raas_connection.ssh_command_sync(server, cmd, p)
-
-#                             preferences().raas_blender_installed = True
-#                         break
-
-#             except Exception as e:
-#                 import traceback
-#                 traceback.print_exc()
-
-#                 self.report({'ERROR'}, "Problem with %s: %s: %s" %
-#                             (self.bl_label, e.__class__, e))
-#                 self.report({'ERROR'}, "Blender could not be installed.")
-#                 return {"CANCELLED"}
-
-#         self.report({'INFO'}, "'%s' finished" % (self.bl_label))
-#         return {"FINISHED"}    
 
 ##################################################################
-
 
 class RAAS_OT_install_dependencies(Operator):
     bl_idname = 'raas.install_dependencies'
@@ -918,36 +802,6 @@ class RaasPreferences(AddonPreferences):
 
     def draw(self, context):
         layout = self.layout
-
-        # raas_pid = box.split(**factor(0.25), align=True)
-        # raas_pid.label(text='Project ID:')
-        # pid_box = raas_pid.row(align=True)
-        # pid_box.prop(self, 'raas_pid', text='')
-
-
-        # if self.raas_ssh_library == 'PARAMIKO':
-        #     box = layout.box()
-            
-        #     auth_split = box.split(**factor(0.25), align=True)
-        #     auth_split.label(text='Username:')
-        #     user_box = auth_split.row(align=True)
-        #     user_box.prop(self, 'raas_da_username', text='')
-
-        #     pkey_split = box.split(**factor(0.25), align=True)
-        #     pkey_split.label(text='Private Key File:')
-        #     user_box = pkey_split.row(align=True)
-        #     user_box.prop(self, 'raas_private_key_path', text='')
-
-        #     auth_split = box.split(**factor(0.25), align=True)
-        #     auth_split.label(text='Key Passphrase:')
-        #     user_box = auth_split.row(align=True)
-        #     user_box.prop(self, 'raas_private_key_password', text='')
-
-        # raas_pid_dir = box.split(**factor(0.25), align=True)
-        # raas_pid_dir.label(text='Project Dir:')
-        # pid_dir_box = raas_pid_dir.row(align=True)
-        # pid_dir_box.prop(self, 'raas_pid_dir', text='')
-        # pid_dir_box.operator(RAAS_OT_find_pid_dir.bl_idname, icon="CONSOLE")
         
         box = layout.box()
 
@@ -1042,13 +896,6 @@ class RaasPreferences(AddonPreferences):
             boxD.operator(RAAS_OT_update_dependencies.bl_idname,
                           icon="CONSOLE")
 
-        # box = layout.box()
-
-        # par_split = box.split(**factor(0.25), align=True)
-        # par_split.label(text='SSH Library:')
-        # user_box = par_split.row(align=True)        
-        # user_box.prop(self, 'raas_ssh_library', text='')  
-
         box = layout.box()
 
         boxG = box.box()
@@ -1077,27 +924,6 @@ class RaasPreferences(AddonPreferences):
         rep_box = rep_box1.row(align=True)
         rep_box.prop(self, 'raas_scripts_installed', text='')
 
-        # if self.raas_scripts_installed == False:
-        #     if not self.raas_scripts_installed:
-        #         boxG.label(text='Scripts are not installed', icon='ERROR')
-
-        #     boxG.operator(RAAS_OT_install_scripts.bl_idname,
-        #                     icon="CONSOLE", text="Install scripts on the cluster")
-        # else:
-        #     boxG.operator(RAAS_OT_install_scripts.bl_idname,
-        #                     icon="CONSOLE", text="Update scripts")
-
-
-        # if self.raas_blender_installed == False:
-        #     if not self.raas_blender_installed:
-        #         boxG.label(text='Blender is not installed', icon='ERROR')
-
-        #     boxG.operator(RAAS_OT_install_blender.bl_idname,
-        #                     icon="CONSOLE", text="Install Blender on the cluster")
-        # else:
-        #     boxG.operator(RAAS_OT_install_blender.bl_idname,
-        #                     icon="CONSOLE", text="Update Blender")
-
         if self.raas_scripts_installed == False: # or self.raas_blender_installed == False:
             if not self.raas_scripts_installed:
                 boxG.label(text='Scripts are not installed', icon='ERROR')
@@ -1110,57 +936,6 @@ class RaasPreferences(AddonPreferences):
         else:
             boxG.operator(RAAS_OT_install_scripts.bl_idname,
                             icon="CONSOLE", text="Update scripts and Blender on the cluster(s)")
-
-        # boxG = box.box()
-        # show_gen_split = boxG.split(**factor(0.25), align=True)
-        # show_gen_split.label(text='Generate SSH keys:')
-        # user_box = show_gen_split.row(align=True)
-        # user_box.prop(self, 'show_ssh_gen', text='')
-
-        # if self.raas_ssh_library == 'PARAMIKO' and self.show_ssh_gen == True:
-
-        #     # boxG.label(text='Generate SSH keys:')
-
-        #     # raas_pid = boxG.split(**factor(0.25), align=True)
-        #     # raas_pid.label(text='Project ID:')
-        #     # pid_box = raas_pid.row(align=True)
-        #     # pid_box.prop(self, 'raas_gen_pid', text='')
-
-        #     auth_split = boxG.split(**factor(0.25), align=True)
-        #     auth_split.label(text='Username:')
-        #     user_box = auth_split.row(align=True)
-        #     user_box.prop(self, 'raas_gen_username', text='')
-
-        #     pkey_split = boxG.split(**factor(0.25), align=True)
-        #     pkey_split.label(text='Public Key File:')
-        #     user_box = pkey_split.row(align=True)
-        #     user_box.prop(self, 'raas_gen_public_key_path', text='')
-
-        #     pkey_split = boxG.split(**factor(0.25), align=True)
-        #     pkey_split.label(text='Private Key File:')
-        #     user_box = pkey_split.row(align=True)
-        #     user_box.prop(self, 'raas_gen_private_key_path', text='')
-
-        #     auth_split = boxG.split(**factor(0.25), align=True)
-        #     auth_split.label(text='Key Passphrase:')
-        #     user_box = auth_split.row(align=True)
-        #     user_box.prop(self, 'raas_gen_password', text='')
-
-        #     boxG.operator(RAAS_OT_generate_sshkey.bl_idname,
-        #                     icon="CONSOLE")
-
-        #     acc_split = boxG.split(**factor(0.25), align=True)
-        #     acc_split.label(text='Account Type:')
-        #     acc_box = acc_split.row(align=True)
-        #     acc_box.prop(self, 'raas_account_type', text='')
-
-        #     boxG.operator(RAAS_OT_upload_sshkey.bl_idname, icon="URL")
-
-        #     # boxG = boxG.column()
-        #     # boxG.label(
-        #     #     text='Please wait a minute for the public key to install on all clusters before running Setup.')
-        #     # boxG.operator(RAAS_OT_setup_sshkey.bl_idname, icon="COPY_ID")
-
 
 def ctx_preferences():
     """Returns bpy.context.preferences in a 2.79-compatible way."""

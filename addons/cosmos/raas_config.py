@@ -468,20 +468,26 @@ def GetDAQueueScript(ClusterId, CommandTemplateId):
     elif ClusterId == 2:     
         if CommandTemplateId == 10 * ClusterId:
             return 128,'~/braas-hpc/scripts/karolina-slurm/job_init.sh'
-
+        
         elif CommandTemplateId == 10 * ClusterId + 1:
             return 128,'~/braas-hpc/scripts/karolina-slurm/run_blender_cpu.sh'
 
-        elif CommandTemplateId == 10 * ClusterId + 2:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/job_finish.sh'
+        # elif CommandTemplateId == 10 * ClusterId + 2:
+        #     return 128,'~/start_cosmos_script.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 3:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/job_init.sh'
+            return 128,'~/braas-hpc/scripts/karolina-slurm/job_finish.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 4:
-            return 128,'~/braas-hpc/scripts/karolina-slurm/run_blender_gpu.sh'
+            return 128,'~/braas-hpc/scripts/karolina-slurm/job_init.sh'
 
         elif CommandTemplateId == 10 * ClusterId + 5:
+            return 128,'~/braas-hpc/scripts/karolina-slurm/run_blender_gpu.sh'
+        
+        elif CommandTemplateId == 10 * ClusterId + 5:
+            return 128,'~/brass-hpc/scripts/start_cosmos_script.sh'
+
+        elif CommandTemplateId == 10 * ClusterId + 6:
             return 128,'~/braas-hpc/scripts/karolina-slurm/job_finish.sh'
 
                                

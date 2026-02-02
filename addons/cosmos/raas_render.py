@@ -25,6 +25,8 @@ import os
 from pathlib import Path, PurePath
 import typing
 import asyncio
+import shlex
+import json
 
 ################################
 import time
@@ -55,15 +57,6 @@ def redraw(self, context):
         return
     context.area.tag_redraw() 
 
-# def show_message_box(message = "", title = "BRaaS-HPC", type = 'ERROR'):
-
-#     def draw(self, context):
-#         self.layout.label(message)
-
-#     bpy.context.window_manager.popup_menu(draw, title = title, icon = type)
-
-#     #self.report({type}, message)
-
 ################################
 
 class RaasButtonsPanel:
@@ -76,7 +69,7 @@ class RaasButtonsPanel:
         return context.engine == 'CYCLES' or context.engine == 'BRAAS_HPC'
 
 class RAAS_PT_simplify(RaasButtonsPanel, Panel):
-    bl_label = "BRaaS-HPC"
+    bl_label = "Cosmos"
     bl_options = {'DEFAULT_CLOSED'}
 
     def draw(self, context):
@@ -192,6 +185,11 @@ FileType_items = [
     ("DEFAULT", "Packed .blend file", "Libraries packed into a single .blend file"),
     ("OTHER", "Sources in directory", "Select a .blend file together with directory with dependencies."),
 ]
+
+MethodType_items = [
+    ("edge", "Edge", ""),
+    ("seg", "Seg", "")
+]
   
 ####################################ListJobsForCurrentUser####################
 def set_blendfile_dir(self, value):
@@ -241,6 +239,10 @@ class RAAS_PG_BlenderJobInfo(PropertyGroup):
     file_type : bpy.props.EnumProperty(items=FileType_items,name="File") # type: ignore
     blendfile_dir : bpy.props.StringProperty(name="Dir", subtype='DIR_PATH', update=set_blendfile_dir) # type: ignore
     blendfile : bpy.props.StringProperty(name="Blend", default='') # type: ignore
+
+    cosmos_prompt : bpy.props.StringProperty(name="Prompt") # type: ignore
+    cosmos_input_video_path : bpy.props.StringProperty(name="InputVideoPath") # type: ignore
+    cosmos_method : bpy.props.EnumProperty(items=MethodType_items, name="Method") # type: ignore
 
 class RAAS_PG_SubmittedTaskInfoExt(PropertyGroup):
     Id : bpy.props.IntProperty(name="Id") # type: ignore
@@ -468,21 +470,6 @@ class RAAS_OT_dash_karolina(
 
         self.quit()
 
-
-# class RAAS_OT_dash_grafana(
-#         async_loop.AsyncModalOperatorMixin,
-#         AuthenticatedRaasOperatorMixin,
-#         Operator):
-#     """dash_grafana"""
-#     bl_idname = 'raas.dash_grafana'
-#     bl_label = 'Dashboard of the clusters'
-
-#     async def async_execute(self, context):
-#         import webbrowser
-#         webbrowser.open('https://extranet.it4i.cz/grafana', new=2)
-
-#         self.quit()
-
 ############################################################################
 async def submit_job_save_blendfile(context, outdir):
     """Save to a different file, specifically for Raas.
@@ -585,41 +572,6 @@ async def submit_job_bat_pack(filepath, project, outdir):
     projdir = Path(proj_abspath).resolve()
     exclusion_filter = '*.vdb' #(prefs.raas_exclude_filter or '').strip()
     relative_only = False #prefs.raas_relative_only
-
-    # self.log.debug('projdir: %s', projdir)
-
-    # dt = datetime.now().isoformat('-').replace(':', '').replace('.', '')
-    # unique_dir = '%s-%s' % (dt[0:19], project)
-    # outdir = Path(prefs.raas_job_storage_path) / unique_dir / 'in'
-
-    # self.log.debug('outdir : %s', outdir)
-
-    # try:
-    #     outdir.mkdir(parents=True)
-    # except Exception as ex:
-    #     self.log.exception('Unable to create output path %s', outdir)
-    #     self.report({'ERROR'}, 'Unable to create output path: %s' % ex)
-    #     self.quit()
-    #     return outdir, None, []
-
-    # try:
-    #     outfile, missing_sources = await bat_interface.copy(
-    #         bpy.context, filepath, projdir, outdir, exclusion_filter,
-    #         relative_only=relative_only)
-    # except bat_interface.FileTransferError as ex:
-    #     self.log.error('Could not pack %d files, starting with %s',
-    #                    len(ex.files_remaining), ex.files_remaining[0])
-    #     self.report({'ERROR'}, 'Unable to pack %d files' % len(ex.files_remaining))
-    #     bpy.context.window_manager.raas_status = "ERROR"
-    #     bpy.context.window_manager.raas_status_txt = "There is an error! Check Info Editor!"
-
-    #     self.quit()
-    #     return None
-    # except bat_interface.Aborted:
-    #     self.log.warning('BAT Pack was aborted')
-    #     self.report({'WARNING'}, 'Aborted Raas file packing/transferring')
-    #     self.quit()
-    #     return None
 
     # Step 4: Copy the packed file to the output directory        
     final_filepath = outdir / Path(filepath).name
@@ -769,6 +721,27 @@ class RAAS_OT_submit_job(
             with open(job_info_path, 'w') as f:
                 json.dump(job_info_dict, f, indent=4)
 
+            # Create job directory and save config.json file
+            cosmosConfig = context.scene.raas_blender_job_info_new
+
+            if not cosmosConfig.cosmos_prompt:
+                raise ValueError ("Prompt is required!")
+            elif not cosmosConfig.cosmos_input_video_path:
+                raise ValueError ("Input video path is required!")
+
+            config = {
+                "prompt": cosmosConfig.cosmos_prompt,
+                "input_video_path": cosmosConfig.cosmos_input_video_path,
+                cosmosConfig.cosmos_method: { "control_weight": 1.0 }
+            }
+
+            outdir_job = Path(prefs.raas_job_storage_path) / unique_dir / 'in'
+            #outdir_job.mkdir(parents=True, exist_ok=True)
+            job_info_path = outdir_job / 'config.json'
+            
+            with open(job_info_path, 'w') as f:
+                json.dump(config, f, indent=4)
+
             ######################
             
             # self.log.info('Job info saved to %s', job_info_path)
@@ -881,37 +854,6 @@ class RAAS_OT_explore_file_path(Operator):
 
         return {'FINISHED'}
 
-# class RAAS_PT_MessageOfTheDay(RaasButtonsPanel, Panel):
-#     bl_label = "Dashboards"
-#     bl_parent_id = "RAAS_PT_simplify"
-
-#     def draw(self, context):
-#         layout = self.layout
-#         box = layout.box()
-
-#         # box.operator(RAAS_OT_dash_barbora.bl_idname,                                 
-#         #                     text='Barbora', icon='WORLD')
-
-#         # box.operator(RAAS_OT_dash_karolina.bl_idname,
-#         #                     text='Karolina', icon='WORLD')
-
-#         box.operator(RAAS_OT_dash_grafana.bl_idname,
-#                             text='Grafana', icon='WORLD')                                                        
-
-# class RAAS_PT_Report(RaasButtonsPanel, Panel):
-#     bl_label = "Report"
-#     bl_parent_id = "RAAS_PT_simplify"
-
-#     def draw(self, context):
-#         layout = self.layout
-#         box = layout.box()
-
-#         box.prop(context.scene, "raas_total_core_hours_usage")
-
-#         box.operator(RAAS_OT_GetUserGroupResourceUsageReport.bl_idname,
-#                             text='Core Hours Usage')
-
-
 class RAAS_UL_ClusterPresets(bpy.types.UIList):
     '''Draws table items - allocation, cluster and partition name.'''
     def draw_item(self, context, layout, data, item, icon, active_data, active_propname):
@@ -1014,6 +956,9 @@ class RAAS_PT_NewJob(RaasButtonsPanel, Panel):
         job_info_col.prop(blender_job_info_new, 'job_project')
         job_info_col.prop(blender_job_info_new, 'job_email')
         job_info_col.prop(blender_job_info_new, 'render_type')
+        job_info_col.prop(blender_job_info_new, 'cosmos_prompt')
+        job_info_col.prop(blender_job_info_new, 'cosmos_input_video_path')
+        job_info_col.prop(blender_job_info_new, 'cosmos_method')
         col = job_info_col.box()
         col = col.column(align=True)  
         col.prop(blender_job_info_new, 'file_type')
@@ -1040,7 +985,6 @@ class RAAS_PT_NewJob(RaasButtonsPanel, Panel):
         box.operator(RAAS_OT_submit_job.bl_idname,
                             text='Submit Job',
                             icon='RENDER_ANIMATION')
-
 
 ##########################################################################
 async def GetCurrentInfoForJob(context, job_id: int, token: str) -> None:
@@ -1118,271 +1062,7 @@ class RAAS_OT_GetUserGroupResourceUsageReport(
             context.window_manager.raas_status_txt = "There is an error! Check Info Editor!"
 
 
-        self.quit() 
-
-##########################################################################  
-# async def ListJobsForCurrentUser(context, token):
-
-#     # Id : bpy.props.IntProperty(name="Id")
-#     # Name : bpy.props.StringProperty(name="Name")
-#     # State : bpy.props.EnumProperty(items=JobStateExt_items,name="State")
-#     # Priority : bpy.props.EnumProperty(items=JobPriorityExt_items,name="Priority",default='AVERAGE')
-#     # Project : bpy.props.StringProperty(name="Project Name")
-#     # CreationTime : bpy.props.StringProperty(name="Creation Time")
-#     # SubmitTime : bpy.props.StringProperty(name="Submit Time")
-#     # StartTime : bpy.props.StringProperty(name="Start Time")
-#     # EndTime : bpy.props.StringProperty(name="End Time")
-#     # TotalAllocatedTime : bpy.props.FloatProperty(name="totalAllocatedTime")
-#     # AllParameters : bpy.props.StringProperty(name="allParameters")
-#     # Tasks: bpy.props.StringProperty(name="Tasks")
-#     # ClusterName: bpy.props.StringProperty(name="Cluster Name")
-#     server = raas_config.GetDAServer(context)
-#     cmd = CmdCreateProjectGroupFolder(context)
-#     await ssh_command(server, cmd)
-#     remote_path = get_direct_access_remote_storage(context)
-#     # spusti se vzdalene
-#     cmd = 'cd %s;grep --with-filename -e job_state -e ctime -e stime -e ftime *.job | cat' % (remote_path)
-#     # klasicky vystup qstatu
-#     try:
-#         res = await ssh_command(server, cmd)    
-#     except Exception:
-#         print("No tasks to refresh in the selected project.")
-#         return
-#     # rozdeleno na radku, ale trochu jinak
-#     #00:'2023-04-18-14073394-test.job:    job_state = H'
-#     #01:'2023-04-18-14073394-test.job:    ctime = Tue Apr 18 14:07:49 2023'
-#     #02:'2023-04-18-14073394-test.job:    ftime = Tue Apr 18 14:42:56 CEST 2023'
-#     lines = res.split('\n')
-
-#     #step = 4
-#     index = 0
-#     count = len(lines) - 1   
-#     raas_list_jobs = []
-#     raas_dict_jobs = {}        
-#     for i in range(count):
-#         line = lines[i]
-#         if len(line) > 0:
-#             if 'job_state' in line:
-#                 #item = context.scene.raas_list_jobs.add()
-#                 name = line.split(':')[0][:-4]
-#                 if name in raas_dict_jobs: # {'2023-04-18-14073394-test': {'Id': 0, 'Name': '2023-04-18-14073394-test', 'Project': 'test'}}
-#                     item = raas_dict_jobs[name]
-#                 else:
-#                     item = {}
-#                     raas_dict_jobs[name] = item
-#                     raas_list_jobs.append(item)
-
-#                     item['Id'] = index    
-#                     item['Name'] = name
-#                     item['Project'] = name[20:]
-#                     item['ClusterName'] = context.scene.raas_blender_job_info_new.cluster_type
-#                     index = index + 1
-
-#                 state = line.split(' = ')
-#                 if len(state) > 0:
-#                     state = state[1]
-#                 else:
-#                     state = ''
-
-#                 # JobStateExt_items = [
-#                 #     ("CONFIGURING", "Configuring", "", 1),
-#                 #     ("SUBMITTED", "Submitted", "", 2),
-#                 #     ("QUEUED", "Queued", "", 4),
-#                 #     ("RUNNING", "Running", "", 8),
-#                 #     ("FINISHED", "Finished", "", 16),
-#                 #     ("FAILED", "Failed", "", 32),
-#                 #     ("CANCELED", "Canceled", "", 64),
-#                 # ]
-
-#                 item['State'] = 1 #"CONFIGURING"
-#                 if state == 'R':
-#                     item['State'] = 8 #"RUNNING"
-#                 if state == 'Q' or state == 'H':
-#                     item['State'] = 4 #"QUEUED"
-#                 if state == 'E' or state == 'F':
-#                     item['State'] = 16 #"FINISHED"
-#                 if state == 'C':
-#                     item['State'] = 64 #"CANCELED"
-
-#             if 'ctime' in line:
-#                 ctime = line.split(' = ')
-#                 if len(ctime) > 0:
-#                     ctime = ctime[1]
-#                 else:
-#                     ctime = ''
-
-#                 item['CreationTime'] = ctime
-#                 item['SubmitTime'] = ctime
-
-#         if 'ftime' in line:
-#             ftime = line.split(' = ')
-#             if len(ftime) > 0:
-#                 ftime = ftime[1]
-#             else:
-#                 ftime = ''
-            
-#             item['EndTime'] = ftime
-
-#         if 'stime' in line:
-#             stime = line.split(' = ')
-#             if len(stime) > 0:
-#                 stime = stime[1]
-#             else:
-#                 stime = ''
-
-#             item['StartTime'] = stime
-
-#     context.scene.raas_list_jobs.clear()
-#     for key in reversed(raas_list_jobs):
-#         item = context.scene.raas_list_jobs.add()
-#         raas_server.fill_items(item, key)         
-
-#     if context.scene.raas_list_jobs_index > len(context.scene.raas_list_jobs) - 1:
-#         context.scene.raas_list_jobs_index = len(context.scene.raas_list_jobs) - 1
-        
-
-# async def ListSlurmJobsForCurrentUser(context, token):
-#     """_Lists remote Slurm jobs_.
-
-#     Args:
-#         context (_bpy.context_): _Blender context_.
-#         token (_type_): _Token_.
-#     """
-
-#     # Id : bpy.props.IntProperty(name="Id")
-#     # Name : bpy.props.StringProperty(name="Name")
-#     # State : bpy.props.EnumProperty(items=JobStateExt_items,name="State")
-#     # Priority : bpy.props.EnumProperty(items=JobPriorityExt_items,name="Priority",default='AVERAGE')
-#     # Project : bpy.props.StringProperty(name="Project Name")
-#     # CreationTime : bpy.props.StringProperty(name="Creation Time")
-#     # SubmitTime : bpy.props.StringProperty(name="Submit Time")
-#     # StartTime : bpy.props.StringProperty(name="Start Time")
-#     # EndTime : bpy.props.StringProperty(name="End Time")
-#     # TotalAllocatedTime : bpy.props.FloatProperty(name="totalAllocatedTime")
-#     # AllParameters : bpy.props.StringProperty(name="allParameters")
-#     # Tasks: bpy.props.StringProperty(name="Tasks")
-#     # ClusterName: bpy.props.StringProperty(name="Cluster Name")
-#     server = raas_config.GetDAServer(context)
-#     cmd = CmdCreateProjectGroupFolder(context)
-#     await ssh_command(server, cmd)
-#     remote_path = get_direct_access_remote_storage(context)
-
-#     # the command is executed remotly - reads the *.job files in remote_path
-#     cmd = 'cd %s;grep --with-filename "" *.job' % (remote_path)
-#     # sacct output
-#     try:
-#         res = await ssh_command(server, cmd)   
-#     except Exception:  # There are no files in the remote location -> no tasks have been submitted to the cluster
-#         print("No tasks to refresh in the selected project.")
-#         context.scene.raas_list_jobs.clear()
-#         context.scene.raas_list_jobs_index = -1 
-#         return
-#     # Example of the read lines 
-#     # - the first line is a header -> skip it
-#     # - the second line is a separator -> skip it
-#     # - only line no. 2 is essential
-#     #00:'2023-04-18-14073394-test.job:    JobID           JobName      State              Submit               Start                 End 
-#     #01:'2023-04-18-14073394-test.job:    ------------ ---------- ---------- ------------------- ------------------- ------------------- 
-#     #02:'2023-04-18-14073394-test.job:    2601              test2  COMPLETED 2023-05-23T14:12:47 2023-05-23T14:12:47 2023-05-23T14:14:28
-
-#     lines = res.split('\n')  # make lines
-
-#     index = 0
-#     raas_list_jobs = []
-#     raas_dict_jobs = {}     
-
-#     #for lineNo, line in enumerate(lines):
-#     line_no = 0
-#     while line_no != len(lines):
-#         line = lines[line_no]
-#         offset = 0
-#         if len(line) > 0:
-#             elements = line.split()
-#             try:
-#                 slurmId = elements[1].split('.')
-#             except IndexError:
-#                 pass  # If the row is somehow ruined, e.g., only a new line
-#             else:
-#                 tmp = ["----" in e for e in elements[1:]]
-#                 onlyTrue = sum(tmp) // len(tmp[1:])  # Used to detect lines with ---- segments only
-#                 name = elements[0].split(".")[0]  # '2023-04-18-14073394-test'
-#                 item = {}
-
-#                 # Is it a job array?
-#                 if len(slurmId[0].split('_')) > 1:  # job array (123_1, 123_2, ...)
-#                     final_status, offset = helper_read_slurm_job_array(lines[line_no:])
-#                     if name in raas_dict_jobs:
-#                         item = raas_dict_jobs[name]
-#                     else:
-#                         status = map_slurm_status(elements[3])
-#                         item = helper_raas_dict_jobs(index, 
-#                                                         name, 
-#                                                         elements[2], 
-#                                                         context.scene.raas_blender_job_info_new.cluster_type,
-#                                                         final_status)
-#                         raas_dict_jobs[name] = item
-#                         raas_list_jobs.append(item)
-#                         index = index + 1
-
-#                     # Add additional values to item:
-#                     item['CreationTime'] = elements[4]  # '2023-05-23T21:41:28'
-#                     item['SubmitTime'] = elements[4]  # '2023-05-23T21:41:28'
-#                     item['StartTime'] = elements[5]  # '2023-05-23T21:41:28'
-#                     item['EndTime'] = elements[6]  # May be # '2023-05-23T21:41:28' or 'Unknown'
-#                 # get the line with JobId as a number
-#                 elif "JobID" not in elements[1] \
-#                     and "----" not in elements[1] \
-#                         and len(slurmId) == 1 \
-#                         and len(elements) == 7:  # Slurm log has always 7 elements
-
-#                     if name in raas_dict_jobs:
-#                         item = raas_dict_jobs[name]
-#                     else:
-#                         status = map_slurm_status(elements[3])
-#                         item = helper_raas_dict_jobs(index, 
-#                                                      name, 
-#                                                      elements[2], 
-#                                                      context.scene.raas_blender_job_info_new.cluster_type,
-#                                                      status)
-#                         raas_dict_jobs[name] = item
-#                         raas_list_jobs.append(item)
-#                         index = index + 1
-
-#                     # Add additional values to item:
-#                     item['CreationTime'] = elements[4]  # '2023-05-23T21:41:28'
-#                     item['SubmitTime'] = elements[4]  # '2023-05-23T21:41:28'
-#                     item['StartTime'] = elements[5]  # '2023-05-23T21:41:28'
-#                     item['EndTime'] = elements[6]  # May be # '2023-05-23T21:41:28' or 'Unknown'
-#                 # Check the current line for this pattern: name.job ---- ----- ----- -----
-#                 # Check whether the next line contains the same name 
-#                 # -> if not: error
-#                 # -> otherwise: OK    
-#                 elif onlyTrue == 1 \
-#                     and (line_no + 1) < len(lines) \
-#                         and len(lines[line_no + 1]) > 0 \
-#                         and lines[line_no + 1].split()[0].split('.')[0] != elements[0].split('.')[0]:
-
-#                     if name in raas_dict_jobs:
-#                         item = raas_dict_jobs[name]
-#                     else:
-#                         split_point = name.split('-')[3] 
-#                         item = helper_raas_dict_jobs(index,
-#                                                      name, 
-#                                                      name.split(split_point + '-')[1],   # '2023-33-33-3436465-project-name'
-#                                                      context.scene.raas_blender_job_info_new.cluster_type,
-#                                                      2)  #  "SUBMITTED"
-#                         raas_dict_jobs[name] = item
-#                         raas_list_jobs.append(item)
-#                         index = index + 1
-#         line_no = line_no + 1 + offset
-
-#     context.scene.raas_list_jobs.clear()
-#     for key in reversed(raas_list_jobs):
-#         item = context.scene.raas_list_jobs.add()
-#         raas_server.fill_items(item, key)         
-
-#     if context.scene.raas_list_jobs_index > len(context.scene.raas_list_jobs) - 1:
-#         context.scene.raas_list_jobs_index = len(context.scene.raas_list_jobs) - 1
+        self.quit()
 
 async def ListSlurmJobsForCurrentUser(context, token):
     """Lists remote Slurm jobs by parsing job files.
@@ -1507,12 +1187,17 @@ class RAAS_OT_ListJobsForCurrentUser(
             context.window_manager.raas_status_txt = "There is an error! Check Info Editor!"
 
 
-        self.quit()           
+        self.quit()     
 
 ##########################################################################
 
 async def SubmitJob(context, token):
         #item = context.scene.raas_submitted_job_info_ext_new
+
+        # try:
+        #     await GenerateConfigJsonForCosmos(context)
+        # except Exception as e:
+        #     raise Exception(f"Generating config for cosmos failed with error: {e}")
 
         prefs = raas_pref.preferences()
         preset = prefs.cluster_presets[bpy.context.scene.raas_cluster_presets_index]
@@ -1737,6 +1422,44 @@ class RAAS_PT_ListJobs(RaasButtonsPanel, Panel):
             row = box.row()
             row.operator(RAAS_OT_download_files.bl_idname, text='Download results')
 
+async def GenerateConfigJsonForCosmos(context):
+    """
+    Docstring for GenerateConfigJsonForCosmos
+    
+    :param context: Description
+    """
+    cosmosConfig = context.scene.raas_blender_job_info_new
+
+    if not cosmosConfig.cosmos_prompt:
+        raise ValueError ("Prompt is required!")
+    elif not cosmosConfig.cosmos_input_video_path:
+        raise ValueError ("Input video path is required!")
+
+    config = {
+        "prompt": cosmosConfig.cosmos_prompt,
+        "input_video_path": cosmosConfig.cosmos_input_video_path,
+        cosmosConfig.cosmos_method: { "control_weight": 1.0 }
+    }
+
+    config_json = json.dumps(config)
+
+    # Escape safely for shell
+    escaped = shlex.quote(config_json)
+
+    remote_path = '${PWD}/in/config.json'
+
+    cmd = f"""mkdir -p "$(dirname {remote_path})" && echo {escaped} > {remote_path}"""    
+    prefs = raas_pref.preferences()
+    preset = prefs.cluster_presets[bpy.context.scene.raas_cluster_presets_index]
+
+    # server = raas_config.GetDAServer(context)
+    server = context.scene.raas_config_functions.call_get_da_server(context)
+    try:
+        res = await raas_connection.ssh_command(server, cmd, preset)
+        raise Exception (res)
+    except Exception as e:
+        raise Exception(f"Saving file to server failed! Error: {e}")
+
 ######################CLEANUP###########################  
 @bpy.app.handlers.persistent
 def cleanup_on_exit():
@@ -1780,7 +1503,7 @@ def register():
     scene.raas_blender_job_info_new = bpy.props.PointerProperty(type=RAAS_PG_BlenderJobInfo, options={'SKIP_SAVE'})
     scene.raas_submitted_job_info_ext_new = bpy.props.PointerProperty(type=RAAS_PG_SubmittedJobInfoExt, options={'SKIP_SAVE'})
     scene.raas_total_core_hours_usage = bpy.props.IntProperty(default=0)
-    
+
     scene.raas_session = raas_connection.RaasSession()
     scene.raas_config_functions = raas_config.RaasConfigFunctions()
     #################################       

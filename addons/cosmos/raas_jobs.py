@@ -80,7 +80,7 @@ async def CreateJobTask3Dep(context,
     use_mpi2 = context.scene.raas_config_functions.call_get_da_queue_mpi_procs(job_task2.CommandTemplateId)
     use_mpi3 = context.scene.raas_config_functions.call_get_da_queue_mpi_procs(job_task3.CommandTemplateId)
 
-    if blender_job_info_new.render_type == 'IMAGE':        
+    if blender_job_info_new.render_type == 'IMAGE':
         job_arrays = None
         frame_start = blender_job_info_new.frame_current
         frame_end = blender_job_info_new.frame_current
@@ -522,6 +522,8 @@ def CmdCreateSLURMJob(context):
 
         custom_flags = context.scene.raas_config_functions.call_get_special_job_flags(context, cluster_id, command_template_id, pid_queue)
 
+        #_0=$echo ' cosmo.sh scenefile.wtv ' | sbatch --account pid_name --export=??? --nodes=1
+        # --job-name "blenderProjectName?" --time=
         cmd = cmd + '_' + str(task_id) + '=$(echo \' ' + script + ' ' + file + ' \' | sbatch --account ' + \
             raas_config.GetDAOpenCallProject(pid_name) + ' --export=' + job_env + ' --nodes=' + \
             str(nodes) + ' --job-name \"' + job_project + '\" --time=' + walltime + ' --partition=' + pid_queue + \

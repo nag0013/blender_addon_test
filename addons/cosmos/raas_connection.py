@@ -1115,40 +1115,20 @@ def _paramiko_ssh(server, username, key_file, key_file_password, password, use_p
         """ Execute an paramiko ssh command """
 
         import paramiko
-        #from io import StringIO
-        #from base64 import b64decode
-        #from scp import SCPClient
 
         bpy.context.scene.raas_session.show_dialog(server, username, key_file, key_file_password, password, use_password, use_password_2fa, client_type='PARAMIKO')
 
-        #ssh = None
         result = None
         try: 
-            # ssh = paramiko.SSHClient()
-            # ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            # try:
-            #     key = paramiko.RSAKey.from_private_key_file(key_file, password)
-            # except:
-            #     key = paramiko.Ed25519Key.from_private_key_file(key_file, password)
-
-            #ssh.connect(server, username=username, pkey=key)
             ssh = bpy.context.scene.raas_session.paramiko_get_ssh(server)
             stdin, stdout, stderr = ssh.exec_command(command)
             result = stdout.readlines()
             error = stderr.readlines()            
 
             if len(error) > 0 and (len(error) > 1 or 'load bsc' not in error[0]):
-                raise Exception(str(error))
-
-            #ssh.close()    
+                raise Exception(str(error))   
 
         except Exception as e:
-            # if scp is not None:
-            #     scp.close()
-
-            # if ssh is not None:
-            #     ssh.close()
-            #bpy.context.scene.raas_session.create_session(None)
 
             raise Exception("paramiko ssh command failed:  %s: %s" % (e.__class__, e))    
 

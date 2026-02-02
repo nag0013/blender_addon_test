@@ -14,13 +14,13 @@
 # (c) IT4Innovations, VSB-TUO
 
 bl_info = {
-    "name" : "BRaaS-HPC",
-    "author" : "Milan Jaros, Petr Strakos, Marta Jaros, Lubomir Riha",
-    "description" : "Rendering-as-a-service for Blender on HPC",
+    "name" : "Addon Cosmos",
+    "author" : "JBN",
+    "description" : "Cosmos for Blender on HPC",
     "blender" : (4, 0, 0),
-    "version" : (4, 5, 5),
+    "version" : (4, 5, 17),
     "location" : "Addon Preferences panel",
-    "wiki_url" : "https://github.com/It4innovations/braas-hpc/",
+    "wiki_url" : "https://github.com/nag0013/blender_addon_test/",
     "category" : "System",
 }
 
@@ -53,5 +53,5 @@ def unregister():
         raas_pref.unregister()
         raas_render.unregister() 
     except RuntimeError:
-        pass
+        pass    
 
