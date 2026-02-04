@@ -32,5 +32,7 @@ mkdir -p ${CACHE_DIR}
 
 . /mnt/proj1/open-35-29/cosmos-on-karolina/pixi_enable.cmd
 
-pixi run "run_cosmos.sh"
+cd /mnt/proj1/open-35-29/cosmos-on-karolina/
+
+pixi run "~/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh"
 
