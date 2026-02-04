@@ -15,6 +15,7 @@ LOG_DIR=${ROOT_DIR}/log
 IN_DIR=${ROOT_DIR}/in
 OUT_DIR=${ROOT_DIR}/out
 CACHE_DIR=${ROOT_DIR}/cache
+RUN_COSMOS="~/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh"
 
 LOG=${LOG_DIR}/${FRAME}.log
 ERR=${LOG_DIR}/${FRAME}.err
@@ -34,5 +35,5 @@ mkdir -p ${CACHE_DIR}
 
 cd /mnt/proj1/open-35-29/cosmos-on-karolina/
 
-pixi run "~/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh"
+pixi run ${RUN_COSMOS}
 
