@@ -15,7 +15,7 @@ LOG_DIR=${ROOT_DIR}/log
 IN_DIR=${ROOT_DIR}/in
 OUT_DIR=${ROOT_DIR}/out
 CACHE_DIR=${ROOT_DIR}/cache
-RUN_COSMOS="~/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh"
+RUN_COSMOS=${HOME}/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh
 
 LOG=${LOG_DIR}/${FRAME}.log
 ERR=${LOG_DIR}/${FRAME}.err

@@ -18,7 +18,7 @@ bl_info = {
     "author" : "JBN",
     "description" : "Cosmos for Blender on HPC",
     "blender" : (4, 0, 0),
-    "version" : (4, 5, 26),
+    "version" : (4, 5, 27),
     "location" : "Addon Preferences panel",
     "wiki_url" : "https://github.com/nag0013/blender_addon_test/",
     "category" : "System",
