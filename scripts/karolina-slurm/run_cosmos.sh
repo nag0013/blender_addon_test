@@ -11,6 +11,7 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 ROOT_DIR=${PWD}/../
 OUT_DIR=${ROOT_DIR}/output
+CONFIG_DIR=${ROOT_DIR}/in/config.json
 
 mkdir -p ${OUT_DIR}
 
@@ -22,7 +23,7 @@ PYTHONPATH=$(pwd) torchrun \
     cosmos_transfer1/diffusion/inference/transfer.py \
     --checkpoint_dir $CHECKPOINT_DIR \
     --video_save_folder ${OUT_DIR} \
-    --controlnet_specs ${ROOT_DIR}/in/config.json \
+    --controlnet_specs ${CONFIG_DIR}\
     --offload_diffusion_transformer \
     --offload_text_encoder_model \
     --offload_guardrail_models \

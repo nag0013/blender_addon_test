@@ -475,19 +475,19 @@ def GetDAQueueScript(ClusterId, CommandTemplateId):
         # elif CommandTemplateId == 10 * ClusterId + 2:
         #     return 128,'~/start_cosmos_script.sh'
 
-        elif CommandTemplateId == 10 * ClusterId + 3:
+        elif CommandTemplateId == 10 * ClusterId + 2:
             return 128,'~/blender_addon_test/scripts/karolina-slurm/job_finish.sh'
 
-        elif CommandTemplateId == 10 * ClusterId + 4:
+        elif CommandTemplateId == 10 * ClusterId + 3:
             return 128,'~/blender_addon_test/scripts/karolina-slurm/job_init.sh'
 
-        elif CommandTemplateId == 10 * ClusterId + 5:
-            return 128,'~/blender_addon_test/scripts/karolina-slurm/run_blender_gpu.sh'
+        # elif CommandTemplateId == 10 * ClusterId + 5:
+        #     return 128,'~/blender_addon_test/scripts/karolina-slurm/run_blender_gpu.sh'
         
-        elif CommandTemplateId == 10 * ClusterId + 5:
-            return 128,'~/brass-hpc/scripts/start_cosmos_script.sh'
+        elif CommandTemplateId == 10 * ClusterId + 4:
+            return 128,'~/blender_addon_test/scripts/karolina-slurm/start_cosmos_script.sh'
 
-        elif CommandTemplateId == 10 * ClusterId + 6:
+        elif CommandTemplateId == 10 * ClusterId + 5:
             return 128,'~/blender_addon_test/scripts/karolina-slurm/job_finish.sh'
 
                                

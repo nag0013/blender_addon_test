@@ -32,7 +32,5 @@ mkdir -p ${CACHE_DIR}
 
 . /mnt/proj1/open-35-29/cosmos-on-karolina/pixi_enable.cmd
 
-cd /mnt/proj1/open-35-29/cosmos-on-karolina/
-
-pixi run  "run_cosmos.sh"
+pixi run "run_cosmos.sh"
 
