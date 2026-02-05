@@ -16,3 +16,10 @@ CONFIG_DIR=${ROOT_DIR}/in/config.json
 if test -f ${CONFIG_DIR}; then
   echo "File exists." > ${ROOT_DIR}/config_dir.txt
 fi
+
+FILE=$1     
+if [ -f $FILE ]; then
+   echo "File exists." > ${ROOT_DIR}/config_dir.txt
+else
+   echo "File NOT exists." > ${ROOT_DIR}/config_dir.txt
+fi
