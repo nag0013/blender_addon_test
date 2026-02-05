@@ -13,21 +13,6 @@ ROOT_DIR=${PWD}/../
 OUT_DIR=${ROOT_DIR}/output
 CONFIG_DIR=${ROOT_DIR}/in/config.json
 
-mkdir -p ${OUT_DIR}
-
-PYTHONPATH=$(pwd) torchrun \
-    --nproc_per_node=$NUM_GPU \
-    --nnodes=1 \
-    --node_rank=0 \
-    --master_port=29501 \
-    cosmos_transfer1/diffusion/inference/transfer.py \
-    --checkpoint_dir $CHECKPOINT_DIR \
-    --video_save_folder ${OUT_DIR} \
-    --controlnet_specs ${CONFIG_DIR}\
-    --offload_diffusion_transformer \
-    --offload_text_encoder_model \
-    --offload_guardrail_models \
-    --offload_prompt_upsampler \
-    --num_gpus $NUM_GPU
-
-
+if test -f ${CONFIG_DIR}; then
+  echo "File exists." > ${ROOT_DIR}/config_dir.txt
+fi
