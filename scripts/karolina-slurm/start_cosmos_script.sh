@@ -17,7 +17,7 @@ OUT_DIR=${ROOT_DIR}/out
 CACHE_DIR=${ROOT_DIR}/cache
 RUN_COSMOS=${HOME}/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh
 
-echo 'This is a test' > ${ROOT_DIR}/test.txt
+echo ${RUN_COSMOS} > ${ROOT_DIR}/run_cosmos.txt
 
 LOG=${LOG_DIR}/${FRAME}.log
 ERR=${LOG_DIR}/${FRAME}.err
