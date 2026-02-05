@@ -17,7 +17,9 @@ OUT_DIR=${ROOT_DIR}/out
 CACHE_DIR=${ROOT_DIR}/cache
 RUN_COSMOS=${HOME}/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh
 
-echo ${RUN_COSMOS} > ${ROOT_DIR}/run_cosmos.txt
+if test -f ${RUN_COSMOS}; then
+  echo "File exists." > ${ROOT_DIR}/run_cosmos.txt
+fi
 
 LOG=${LOG_DIR}/${FRAME}.log
 ERR=${LOG_DIR}/${FRAME}.err
