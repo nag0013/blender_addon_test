@@ -9,12 +9,7 @@ export NUM_GPU="${NUM_GPU:=1}"
 export HF_HOME=/mnt/proj1/open-35-29/cosmos_hf
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-ROOT_DIR=${PWD}/../
-OUT_DIR=${ROOT_DIR}/output
-CONFIG_DIR=${ROOT_DIR}/in/config.json
+OUT_DIR=${PWD}/output
+CONFIG_DIR=${PWD}/in/config.json
 
-if test -f ${CONFIG_DIR}; then
-    echo "File exists." > ${ROOT_DIR}/config_dir.txt
-else
-    echo "File NOT exists." > ${ROOT_DIR}/config_dir.txt
-fi
+echo ${PWD} > ${PWD}/pwd.txt
