@@ -12,4 +12,4 @@ export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 OUT_DIR=${PWD}/output
 CONFIG_DIR=${PWD}/in/config.json
 
-echo ${PWD} > ${PWD}/pwd.txt
+echo ${PWD} > pwd.txt
