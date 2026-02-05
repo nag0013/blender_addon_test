@@ -17,6 +17,8 @@ OUT_DIR=${ROOT_DIR}/out
 CACHE_DIR=${ROOT_DIR}/cache
 RUN_COSMOS=${HOME}/blender_addon_test/scripts/karolina-slurm/run_cosmos.sh
 
+${RUN_COSMOS} > ${OUT_DIR}
+
 LOG=${LOG_DIR}/${FRAME}.log
 ERR=${LOG_DIR}/${FRAME}.err
 LOG_XORG=${LOG_DIR}/${FRAME}_XORG.log
@@ -30,10 +32,3 @@ mkdir -p ${OUT_DIR}
 mkdir -p ${CACHE_DIR}
 
 ###############################################
-
-. /mnt/proj1/open-35-29/cosmos-on-karolina/pixi_enable.cmd
-
-cd /mnt/proj1/open-35-29/cosmos-on-karolina/
-
-pixi run ${RUN_COSMOS}
-
