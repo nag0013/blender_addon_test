@@ -9,7 +9,22 @@ export NUM_GPU="${NUM_GPU:=1}"
 export HF_HOME=/mnt/proj1/open-35-29/cosmos_hf
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-OUT_DIR=${PWD}/output
-CONFIG_DIR=${PWD}/in/config.json
+OUT_DIR=outputs
+CONFIG=config.json
 
-echo ${PWD} > pwd.txt
+mkdir -p ${OUT_DIR}
+
+PYTHONPATH=$(pwd) torchrun \
+    --nproc_per_node=$NUM_GPU \
+    --nnodes=1 \
+    --node_rank=0 \
+    --master_port=29501 \
+    cosmos_transfer1/diffusion/inference/transfer.py \
+    --checkpoint_dir $CHECKPOINT_DIR \
+    --video_save_folder ${OUT_DIR} \
+    --controlnet_specs ${CONFIG}\
+    --offload_diffusion_transformer \
+    --offload_text_encoder_model \
+    --offload_guardrail_models \
+    --offload_prompt_upsampler \
+    --num_gpus $NUM_GPU
