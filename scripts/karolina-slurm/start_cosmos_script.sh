@@ -35,4 +35,4 @@ mkdir -p ${CACHE_DIR}
 
 cd /mnt/proj1/open-35-29/cosmos-on-karolina/
 
-pixi run ${RUN_COSMOS}
+. ${RUN_COSMOS}
