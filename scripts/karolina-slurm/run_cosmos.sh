@@ -14,6 +14,8 @@ CONFIG=config.json
 
 mkdir -p ${OUT_DIR}
 
+echo "Root path is: $1" > config_dir.txt
+
 PYTHONPATH=$(pwd) torchrun \
     --nproc_per_node=$NUM_GPU \
     --nnodes=1 \
