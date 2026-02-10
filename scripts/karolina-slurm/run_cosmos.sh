@@ -9,12 +9,17 @@ export NUM_GPU="${NUM_GPU:=1}"
 export HF_HOME=/mnt/proj1/open-35-29/cosmos_hf
 export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
-OUT_DIR=outputs
-CONFIG=config.json
+ROOT_DIR=$1
+OUT_DIR=${ROOT_DIR}/outputs
+CONFIG=${ROOT_DIR}/in/config.json
+
+if test -f ${CONFIG_DIR}; then
+    echo "File exists." > config_dir.txt
+else
+    echo "File NOT exists." > config_dir.txt
+fi
 
 mkdir -p ${OUT_DIR}
-
-echo "Root path is: $1" > config_dir.txt
 
 PYTHONPATH=$(pwd) torchrun \
     --nproc_per_node=$NUM_GPU \
