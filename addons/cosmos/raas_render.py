@@ -217,7 +217,7 @@ class RAAS_PG_BlenderJobInfo(PropertyGroup):
     job_name : bpy.props.StringProperty(name="JobName") # type: ignore
     job_email : bpy.props.StringProperty(name="Email") # type: ignore
     job_project : bpy.props.StringProperty(name="Project Name",maxlen=25) # type: ignore
-    job_walltime : bpy.props.IntProperty(name="Walltime [minutes]",default=30,min=1,max=2880)# type: ignore
+    job_walltime : bpy.props.IntProperty(name="Walltime [minutes]",default=180,min=1,max=2880)# type: ignore
     job_walltime_pre : bpy.props.IntProperty(name="Walltime Preprocessing [minutes]",default=10,min=1,max=2880) # type: ignore
     job_walltime_post : bpy.props.IntProperty(name="Walltime Postprocessing [minutes]",default=10,min=1,max=2880) # type: ignore
     #job_nodes : bpy.props.IntProperty(name="Nodes",default=1,min=1,max=8)  # type: ignore
@@ -240,7 +240,7 @@ class RAAS_PG_BlenderJobInfo(PropertyGroup):
     blendfile_dir : bpy.props.StringProperty(name="Dir", subtype='DIR_PATH', update=set_blendfile_dir) # type: ignore
     blendfile : bpy.props.StringProperty(name="Blend", default='') # type: ignore
 
-    cosmos_prompt : bpy.props.StringProperty(name="Prompt") # type: ignore
+    cosmos_prompt : bpy.props.StringProperty(name="Prompt",) # type: ignore
     cosmos_input_video_path : bpy.props.StringProperty(name="InputVideoPath") # type: ignore
     cosmos_method : bpy.props.EnumProperty(items=MethodType_items, name="Method") # type: ignore
 

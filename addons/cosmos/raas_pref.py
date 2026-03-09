@@ -681,8 +681,8 @@ class RaasPreferences(AddonPreferences):
     ) # type: ignore
 
     raas_scripts_repository: StringProperty(
-        name='Repository',
-        default='https://github.com/It4innovations/braas-hpc.git'
+        name='Repository', 
+        default='https://github.com/nag0013/blender_addon_test.git'
     ) # type: ignore
 
     raas_scripts_repository_branch: StringProperty(
