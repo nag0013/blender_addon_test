@@ -61,3 +61,7 @@ fi
 
 #apptainer exec -B /scratch -B /mnt -B /apps -B ${CUDA_ROOT}:/usr/local/cuda --nv /apps/all/OS/Ubuntu/ubuntu_blender/ubuntu_blender.img /apps/all/Blender/${blender_version}/
 ~/blender/blender --factory-startup --enable-autoexec -noaudio --background ${IN_DIR}/${BLEND_FILE} -E CYCLES -P ~/braas-hpc/scripts/karolina-slurm/use_gpu.py --render-output ${OUT_DIR}/###### ${FRAME_CMD} >> ${LOG} 2>> ${ERR}
+
+module load FFmpeg
+cd ${OUT_DIR}
+ffmpeg -framerate 24 -i %06d.png -c:v libx264 -pix_fmt yuv420p output.mp4
