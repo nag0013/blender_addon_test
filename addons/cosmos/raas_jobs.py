@@ -424,8 +424,8 @@ def CmdCreatePBSJob(context):
 
         depends_on = ''
         if 'DependsOn' in task:
-            dep_task_data = task['DependsOn'][0]
-            dep_is_array = dep_task_data.get('JobArrays') is not None
+            dep_tasks = task['DependsOn']
+            dep_is_array = len(dep_tasks) > 0 and dep_tasks[0].get('JobArrays') is not None
             array_suffix = '[]' if dep_is_array else ''
             depends_on = ' -W depend=afterok:$_' + str(task_id - 1) + array_suffix
             job_env = job_env + 'depends_on=\"$_' + str(task_id - 1) + '\",'
@@ -514,8 +514,8 @@ def CmdCreateSLURMJob(context):
 
         depends_on = ''
         if 'DependsOn' in task:
-            dep_task_data = task['DependsOn'][0]
-            dep_is_array = dep_task_data.get('JobArrays') is not None
+            dep_tasks = task['DependsOn']
+            dep_is_array = len(dep_tasks) > 0 and dep_tasks[0].get('JobArrays') is not None
             array_suffix = '_*' if dep_is_array else ''
             depends_on = ' --dependency=afterok:${_' + str(task_id - 1) + '##* }' + array_suffix
             job_env = job_env + 'depends_on=\"$_' + str(task_id - 1) + '\",'
