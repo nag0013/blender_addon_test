@@ -33,9 +33,6 @@ if [ ${#work_dir} -ge 1  ]; then
 fi
 ###############################################
 
-if [ "$SLURM_ARRAY_TASK_ID" -eq "$SLURM_ARRAY_TASK_MAX" ]; then
-  module load FFmpeg
-  cd ${OUT_DIR}
-  ffmpeg -framerate 24 -i %06d.png -c:v libx264 -pix_fmt yuv420p output.mp4
-fi
-
+module load FFmpeg
+cd ${OUT_DIR}
+ffmpeg -framerate 24 -i %06d.png -c:v libx264 -pix_fmt yuv420p output.mp4
